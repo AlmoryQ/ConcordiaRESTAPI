@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "targets": [
+      "sandbox"
+    ],
+    "ignore": [],
+    "source": "functions"
+  },
+  "client": {
+    "source": "client"
+  }
+}
