@@ -8,24 +8,9 @@ router.use(express.urlencoded({ extended: true }))
 
 // Obtener contacto de books utilizando correo de contacto en crm
 router.get('/getIdProducto', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
 
-  // 2234337000028805061
   // Logica: Obtener ID Producto en Books
   const idProducto = '2234337000023667433'
 
@@ -49,24 +34,9 @@ router.get('/getIdProducto', async (req, res) => {
 
 // Obtener id contacto con correo
 router.get('/getIdContacto', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
 
-  // 2234337000028805061
   // Logica: Obtener ID Producto en Books
   const correo = 'alejandro@villaprueba.com'
 
@@ -90,22 +60,8 @@ router.get('/getIdContacto', async (req, res) => {
 
 // Obtener factura por ID
 router.get('/getInvoiceById', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
 
   const idInvoice = '888587000172622918'
 
@@ -129,22 +85,9 @@ router.get('/getInvoiceById', async (req, res) => {
 
 // Obtener facturas
 router.get('/getInvoices/:customer_name&:item_name', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
+
   const config = {
     method: 'get',
     url: `https://books.zoho.com/api/v3/invoices?customer_name=${req.params.customer_name}&item_name=${req.params.item_name}&page=1&sort_column=created_time&sort_order=A&organization_id=${process.env.ORGANIZATION_BOOKS}`,
@@ -182,39 +125,25 @@ router.get('/getInvoices/:customer_name&:item_name', async (req, res) => {
 
 // Crear invoice -- Pendiente cambiar a POST !!!
 router.get('/createInvoice', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
 
   //Config Axios
   const invoice = {
-    'customer_id':"888587000033680404",
-    'custom_fields':[
-      {'label':'TipoProducto','value':'Casa'},
+    customer_id: '888587000033680404',
+    custom_fields: [{ label: 'TipoProducto', value: 'Casa' }],
+    line_items: [
+      {
+        rate: 3000,
+        description: 'pago a capital',
+        quantity: 1,
+        item_id: '888587000011266039',
+      },
     ],
-    'line_items':[{
-      'rate':3000,
-      'description':"pago a capital",
-      'quantity':1,
-      'item_id':"888587000011266039"
-    }],
-    'date':"2021-08-26",
-    'due_date':"2021-08-31",
-    'reference_number':"5 de 240 VILLA PRUEBA M2-L2",
-    'zcrm_potential_id':"2234337000105397015",
+    date: '2021-08-26',
+    due_date: '2021-08-31',
+    reference_number: '5 de 240 VILLA PRUEBA M2-L2',
+    zcrm_potential_id: '2234337000105397015',
   }
 
   const config = {
@@ -223,11 +152,11 @@ router.get('/createInvoice', async (req, res) => {
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
-    data : invoice,
+    data: invoice,
   }
 
   // Realizar peticion con Axios
-  try {    
+  try {
     const resp = await axios(config)
     res.send(resp.data)
   } catch (error) {
@@ -235,39 +164,23 @@ router.get('/createInvoice', async (req, res) => {
   }
 })
 
-// Enviar Factura 
+// Enviar Factura
 router.get('/sendInvoice/:id', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
-
+  const accessToken = await getAcessToken(req)
   //Config Axios
   const invoiceId = req.params.id
 
   const config = {
     method: 'post',
-    url: `https://books.zoho.com/api/v3/invoices/${invoiceId}/status/sent?organization_id=${process.env.ORGANIZATION_BOOKS}`
-    ,
+    url: `https://books.zoho.com/api/v3/invoices/${invoiceId}/status/sent?organization_id=${process.env.ORGANIZATION_BOOKS}`,
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
   }
 
   // Realizar peticion con Axios
-  try {    
+  try {
     const resp = await axios(config)
     res.send(resp.data)
   } catch (error) {
@@ -277,22 +190,8 @@ router.get('/sendInvoice/:id', async (req, res) => {
 
 // Obtener un producto por ID
 router.get('/getItemById/:id', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
+  const accessToken = await getAcessToken(req)
 
   //Config Axios
   const idProductoBooks = req.params.id
@@ -316,23 +215,8 @@ router.get('/getItemById/:id', async (req, res) => {
 
 // Obtener ID de producto utilizando el ID de producto en CRM
 router.get('/getIdItem/:id', async (req, res) => {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
   // obtener access token
-  const accessToken = await connector.getAccessToken()
-
+  const accessToken = await getAcessToken(req)
   //Config Axios
   const idProductoBooks = req.params.id
 
@@ -352,5 +236,24 @@ router.get('/getIdItem/:id', async (req, res) => {
     console.log(error)
   }
 })
+
+async function getAcessToken(req) {
+  // inicializar sdk de zoho catalyst
+  const appCatalyst = catalyst.initialize(req)
+  // connector para obtener access token utilizando credenciales
+  const connector = appCatalyst
+    .connection({
+      ConnectorName: {
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
+        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
+        refresh_token: process.env.REFRESH_TOKEN,
+      },
+    })
+    .getConnector('ConnectorName')
+  // obtener access token
+  return (accessToken = await connector.getAccessToken())
+}
 
 module.exports = router
