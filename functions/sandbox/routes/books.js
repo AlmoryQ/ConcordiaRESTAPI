@@ -1,6 +1,6 @@
 const express = require('express')
-const catalyst = require('zcatalyst-sdk-node')
 const axios = require('axios')
+const catalystToken = require('../catalysToken')
 let router = express.Router()
 
 router.use(express.json())
@@ -9,7 +9,7 @@ router.use(express.urlencoded({ extended: true }))
 // Obtener contacto de books utilizando correo de contacto en crm
 router.get('/getIdProducto', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   // Logica: Obtener ID Producto en Books
   const idProducto = '2234337000023667433'
@@ -35,7 +35,7 @@ router.get('/getIdProducto', async (req, res) => {
 // Obtener id contacto con correo
 router.get('/getIdContacto', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   // Logica: Obtener ID Producto en Books
   const correo = 'alejandro@villaprueba.com'
@@ -61,7 +61,7 @@ router.get('/getIdContacto', async (req, res) => {
 // Obtener factura por ID
 router.get('/getInvoiceById', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   const idInvoice = '888587000172622918'
 
@@ -86,7 +86,7 @@ router.get('/getInvoiceById', async (req, res) => {
 // Obtener facturas
 router.get('/getInvoices/:customer_name&:item_name', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   const config = {
     method: 'get',
@@ -126,7 +126,7 @@ router.get('/getInvoices/:customer_name&:item_name', async (req, res) => {
 // Crear invoice -- Pendiente cambiar a POST !!!
 router.get('/createInvoice', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   //Config Axios
   const invoice = {
@@ -167,7 +167,8 @@ router.get('/createInvoice', async (req, res) => {
 // Enviar Factura
 router.get('/sendInvoice/:id', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
+
   //Config Axios
   const invoiceId = req.params.id
 
@@ -191,7 +192,7 @@ router.get('/sendInvoice/:id', async (req, res) => {
 // Obtener un producto por ID
 router.get('/getItemById/:id', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   //Config Axios
   const idProductoBooks = req.params.id
@@ -216,7 +217,8 @@ router.get('/getItemById/:id', async (req, res) => {
 // Obtener ID de producto utilizando el ID de producto en CRM
 router.get('/getIdItem/:id', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
+
   //Config Axios
   const idProductoBooks = req.params.id
 
@@ -236,24 +238,5 @@ router.get('/getIdItem/:id', async (req, res) => {
     console.log(error)
   }
 })
-
-async function getAcessToken(req) {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
-  // obtener access token
-  return (accessToken = await connector.getAccessToken())
-}
 
 module.exports = router

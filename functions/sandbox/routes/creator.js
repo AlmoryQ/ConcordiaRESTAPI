@@ -1,6 +1,6 @@
 const express = require('express')
-const catalyst = require('zcatalyst-sdk-node')
 const axios = require('axios')
+const catalystToken = require('../catalysToken')
 let router = express.Router()
 
 router.use(express.json())
@@ -9,7 +9,7 @@ router.use(express.urlencoded({ extended: true }))
 // Obtener 1 registro de reporte Presupuesto
 router.get('/getRecord/:id', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   // Config para axios
   const idRegistro = req.params.id
@@ -34,7 +34,7 @@ router.get('/getRecord/:id', async (req, res) => {
 // Modificar 1 registro de reporte Presupuesto
 router.post('/updateRecord/:id', async (req, res) => {
   // obtener access token
-  const accessToken = await getAcessToken(req)
+  const accessToken = await catalystToken(req)
 
   // Config para axios
   const idRegistro = req.params.id
@@ -60,24 +60,5 @@ router.post('/updateRecord/:id', async (req, res) => {
     console.log(error)
   }
 })
-
-async function getAcessToken(req) {
-  // inicializar sdk de zoho catalyst
-  const appCatalyst = catalyst.initialize(req)
-  // connector para obtener access token utilizando credenciales
-  const connector = appCatalyst
-    .connection({
-      ConnectorName: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        auth_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_url: 'https://accounts.zoho.com/oauth/v2/token',
-        refresh_token: process.env.REFRESH_TOKEN,
-      },
-    })
-    .getConnector('ConnectorName')
-  // obtener access token
-  return (accessToken = await connector.getAccessToken())
-}
 
 module.exports = router
