@@ -116,36 +116,18 @@ router.get('/getInvoices/:customer_name&:item_name', async (req, res) => {
   }
 })
 
-// Crear invoice -- Pendiente cambiar a POST !!!
-router.get('/createInvoice', async (req, res) => {
-  // obtener access token
+// Crear invoice
+router.post('/createInvoice', async (req, res) => {
   const accessToken = await catalystToken(req)
 
-  //Config Axios
-  const invoice = {
-    customer_id: '888587000033680404',
-    custom_fields: [{ label: 'TipoProducto', value: 'Casa' }],
-    line_items: [
-      {
-        rate: 3000,
-        description: 'pago a capital',
-        quantity: 1,
-        item_id: '888587000011266039',
-      },
-    ],
-    date: '2021-08-26',
-    due_date: '2021-08-31',
-    reference_number: '5 de 240 VILLA PRUEBA M2-L2',
-    zcrm_potential_id: '2234337000105397015',
-  }
-
+  // Config Axios
   const config = {
     method: 'post',
     url: `https://books.zoho.com/api/v3/invoices?organization_id=${process.env.ORGANIZATION_BOOKS}`,
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
-    data: invoice,
+    data: req.body,
   }
 
   // Realizar peticion con Axios
