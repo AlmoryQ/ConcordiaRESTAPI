@@ -1,22 +1,20 @@
 const express = require('express')
 const axios = require('axios')
 const catalystToken = require('../catalysToken')
+// const fetch = require('node-fetch')
 let router = express.Router()
 
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 
 // Obtener contacto de books utilizando correo de contacto en crm
-router.get('/getIdProducto', async (req, res) => {
+router.get('/getIdProducto/:id', async (req, res) => {
   // obtener access token
   const accessToken = await catalystToken(req)
 
-  // Logica: Obtener ID Producto en Books
-  const idProducto = '2234337000023667433'
-
   const config = {
     method: 'get',
-    url: `https://books.zoho.com/api/v3/items?zcrm_product_id=${idProducto}&organization_id=${process.env.ORGANIZATION_BOOKS}`,
+    url: `https://books.zoho.com/api/v3/items?zcrm_product_id=${req.params.id}&organization_id=${process.env.ORGANIZATION_BOOKS}`,
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
@@ -33,16 +31,13 @@ router.get('/getIdProducto', async (req, res) => {
 })
 
 // Obtener id contacto con correo
-router.get('/getIdContacto', async (req, res) => {
+router.get('/getIdContacto/:email', async (req, res) => {
   // obtener access token
   const accessToken = await catalystToken(req)
 
-  // Logica: Obtener ID Producto en Books
-  const correo = 'alejandro@villaprueba.com'
-
   const config = {
     method: 'get',
-    url: `https://books.zoho.com/api/v3/contacts?email=${correo}&organization_id=${process.env.ORGANIZATION_BOOKS}`,
+    url: `https://books.zoho.com/api/v3/contacts?email=${req.params.email}&organization_id=${process.env.ORGANIZATION_BOOKS}`,
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
@@ -59,15 +54,13 @@ router.get('/getIdContacto', async (req, res) => {
 })
 
 // Obtener factura por ID
-router.get('/getInvoiceById', async (req, res) => {
+router.get('/getInvoiceById/:id', async (req, res) => {
   // obtener access token
   const accessToken = await catalystToken(req)
 
-  const idInvoice = '888587000172622918'
-
   const config = {
     method: 'get',
-    url: `https://books.zoho.com/api/v3/invoices/${idInvoice}?organization_id=${process.env.ORGANIZATION_BOOKS}`,
+    url: `https://books.zoho.com/api/v3/invoices/${req.params.id}?organization_id=${process.env.ORGANIZATION_BOOKS}`,
     headers: {
       Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
